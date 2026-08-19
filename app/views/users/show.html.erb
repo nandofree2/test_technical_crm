@@ -1,0 +1,126 @@
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm mb-4 overflow-hidden">
+        <div class="card-header bg-dark text-white py-4 position-relative">
+          <div class="d-flex align-items-center">
+            <div class="bg-primary text-white rounded-circle p-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 80px; height: 80px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+              </svg>
+            </div>
+            <div class="ms-4">
+              <h2 class="fw-bold mb-1"><%= @user.name %></h2>
+            </div>
+          </div>
+        </div>
+        <div class="card-body p-4">
+          <h5 class="fw-bold text-dark mb-4">Personal Information</h5>
+          
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="p-3 bg-light rounded-3">
+                <div class="text-muted small mb-1">Full Name</div>
+                <div class="fw-semibold fs-5"><%= @user.name %></div>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <div class="p-3 bg-light rounded-3">
+                <div class="text-muted small mb-1">Email Address</div>
+                <div class="fw-semibold fs-5"><%= @user.email %></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white border-0 py-3">
+          <h5 class="card-title fw-bold text-dark mb-0 d-flex align-items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-briefcase-fill text-primary me-2" viewBox="0 0 16 16">
+              <path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v1.384l7.614 2.03a1.5 1.5 0 0 0 .772 0L16 5.884V4.5A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5z"/>
+              <path d="M0 12.5A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5V6.85L8.129 8.947a.5.5 0 0 1-.258 0L0 6.85v5.65z"/>
+            </svg>
+            My Organizations
+          </h5>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col" class="ps-4">Organization Name</th>
+                  <th scope="col">Slug</th>
+                  <th scope="col">Role</th>
+                  <th scope="col">Member Status</th>
+                  <th scope="col" class="pe-4 text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if @memberships.any? %>
+                  <% @memberships.each do |membership| %>
+                    <tr>
+                      <td class="ps-4">
+                        <div class="d-flex align-items-center">
+                          <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-2 me-2 d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                            <strong class="fs-6"><%= membership.organization.name[0].upcase %></strong>
+                          </div>
+                          <span class="fw-bold"><%= membership.organization.name %></span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="badge bg-light text-dark border"><%= membership.organization.slug %></span>
+                      </td>
+                      <td>
+                        <span class="badge bg-light text-dark border"><%= membership.role %></span>
+                      </td>
+                      <td>
+                        <span class="badge bg-light text-dark border"><%= membership.member_status %></span>
+                        <% if current_user.memberships.exists?(id: membership.id) && membership.member_status == 'inactive' %>
+                          <button type="button" class="btn btn-sm btn-outline-secondary ms-2" data-bs-toggle="modal" data-bs-target="#switchOrgModal-<%= membership.id %>">
+                            Switch
+                          </button>
+
+                          <div class="modal fade" id="switchOrgModal-<%= membership.id %>" tabindex="-1" aria-labelledby="switchOrgLabel-<%= membership.id %>" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="switchOrgLabel-<%= membership.id %>">Switch Organization</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                  Are you sure you want to switch to <strong><%= membership.organization.name %></strong>?
+                                </div>
+                                <div class="modal-footer">
+                                  <%= button_to switch_organization_user_path(@user), method: :post, params: { membership_id: membership.id }, class: "btn btn-primary" do %>
+                                    Confirm
+                                  <% end %>
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        <% end %>
+                      </td>
+                      <td class="pe-4 text-end">
+                        <%= link_to organization_path(membership.organization), class: "btn btn-sm btn-outline-primary px-3 fw-semibold" do %>
+                          View Org
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                <% else %>
+                  <tr>
+                    <td colspan="3" class="text-center py-4 text-muted">You are not a member of any organization.</td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
