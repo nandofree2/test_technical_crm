@@ -4,6 +4,7 @@ class Membership < ActiveRecord::Migration[7.2]
       t.references :user, type: :uuid, null: false, foreign_key: true
       t.references :organization, type: :uuid, null: false, foreign_key: true
       t.integer :role, default: 0, null: false
+      t.integer :member_status, default: 0, null: false
       t.timestamps
     end
 

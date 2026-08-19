@@ -1,4 +1,4 @@
-class UserController < ApplicationController
+class UsersController < ApplicationController
   def index
     @users = User.all
     render json: @users
@@ -18,7 +18,16 @@ class UserController < ApplicationController
   end
 
   def show
-    @user = User.find(params[:id])
+    @user = current_user
+    @memberships = @user.memberships.includes(:organization)
+  end
+
+  def switch_organization
+    if MembershipOperation::SwitchService.new(current_user, params[:membership_id]).switch
+      redirect_to user_path(current_user), notice: "Successfully switched organization"
+    else
+      render json: { error: service.error_message }, status: :forbidden
+    end
   end
 
   def edit
@@ -32,12 +41,6 @@ class UserController < ApplicationController
     else
       render :edit
     end
-  end
-
-  def destroy
-    @user = User.find(params[:id])
-    @user.destroy
-    redirect_to users_path
   end
 
   private
