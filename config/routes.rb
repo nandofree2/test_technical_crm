@@ -14,6 +14,7 @@ Rails.application.routes.draw do
   root "dashboard#index"
 
   resources :organizations
+  resources :companies
   resources :users do
     member do
       post :switch_organization

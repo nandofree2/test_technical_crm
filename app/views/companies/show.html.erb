@@ -1,0 +1,19 @@
+<div class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="fw-bold text-dark mb-1"><%= @company.name %></h1>
+      <p class="text-muted">Industry: <%= @company.industry.presence || '—' %></p>
+    </div>
+    <div>
+      <% if can?(:update, @company) %>
+        <%= link_to 'Edit', edit_company_path(@company), class: 'btn btn-outline-secondary me-2' %>
+      <% end %>
+      <%= link_to 'Back', companies_path, class: 'btn btn-link' %>
+    </div>
+  </div>
+
+  <div class="card p-4">
+    <p><strong>Organization:</strong> <%= @company.organization.name %></p>
+    <p><strong>Created:</strong> <%= l(@company.created_at, format: :long) %></p>
+  </div>
+</div>
