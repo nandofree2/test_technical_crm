@@ -2,7 +2,6 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
       <h1 class="fw-bold text-dark mb-1">Organizations</h1>
-      <p class="text-muted">Manage your business clients and customer organizations.</p>
     </div>
   </div>
 
@@ -22,9 +21,6 @@
             <tr>
               <td class="ps-4">
                 <div class="d-flex align-items-center">
-                  <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-2 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                    <strong class="fs-5"><%= org.name[0].upcase %></strong>
-                  </div>
                   <div>
                     <h6 class="mb-0 fw-bold"><%= link_to org.name, organization_path(org), class: "text-dark text-decoration-none" %></h6>
                     <small class="text-muted">ID: <%= org.id %></small>

@@ -1,0 +1,26 @@
+<%= form_with(model: company, local: true) do |form| %>
+  <% if company.errors.any? %>
+    <div class="alert alert-danger">
+      <h4>Errors</h4>
+      <ul>
+        <% company.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :name, class: 'form-label' %>
+    <%= form.text_field :name, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :industry, class: 'form-label' %>
+    <%= form.text_field :industry, class: 'form-control' %>
+  </div>
+
+  <div class="d-flex justify-content-end">
+    <%= form.submit class: 'btn btn-primary' %>
+  </div>
+<% end %>
