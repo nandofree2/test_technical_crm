@@ -20,6 +20,27 @@
     <%= form.text_field :industry, class: 'form-control' %>
   </div>
 
+  <% current_membership = current_user.memberships.active.first %>
+  <% if current_membership&.admin? %>
+    <div class="mb-3">
+      <%= form.label :user_ids, "Assign Sales Members (optional)", class: 'form-label' %>
+      <div class="border rounded p-3" style="max-height: 300px; overflow-y: auto;">
+        <% sales_members = current_organization.memberships.active.where(role: :sales).includes(:user) %>
+        <% if sales_members.any? %>
+          <% sales_members.each do |membership| %>
+            <div class="form-check">
+              <%= form.check_box :user_ids, { multiple: true, class: 'form-check-input' }, membership.user.id, nil %>
+              <%= form.label "company_user_ids_#{membership.user.id}", membership.user.name, class: 'form-check-label' %>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="text-muted">No sales members available in this organization.</p>
+        <% end %>
+      </div>
+      <small class="form-text text-muted d-block mt-2">You can assign this company to multiple sales members. Leave unchecked if not assigning yet.</small>
+    </div>
+  <% end %>
+
   <div class="d-flex justify-content-end">
     <%= form.submit class: 'btn btn-primary' %>
   </div>

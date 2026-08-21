@@ -29,6 +29,7 @@
             <tr>
               <th scope="col" class="py-3 ps-4"><%= sort_link @q, :name, 'Company Name' %></th>
               <th scope="col" class="py-3">Industry</th>
+              <th scope="col" class="py-3">Assigned To</th>
               <th scope="col" class="py-3 text-end">Actions</th>
             </tr>
           </thead>
@@ -37,6 +38,15 @@
               <tr>
                 <td class="ps-4 fw-semibold"><%= link_to company.name, company_path(company), class: 'text-dark text-decoration-none' %></td>
                 <td><%= company.industry %></td>
+                <td>
+                  <% if company.users.any? %>
+                    <% company.users.each do |user| %>
+                      <span class="badge bg-primary"><%= user.name %></span>
+                    <% end %>
+                  <% else %>
+                    <span class="text-muted">—</span>
+                  <% end %>
+                </td>
                 <td class="pe-4 text-end">
                   <%= link_to 'View', company_path(company), class: 'btn btn-sm btn-outline-primary me-2' %>
                   <% if can?(:update, company) %>

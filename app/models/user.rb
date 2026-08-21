@@ -1,7 +1,8 @@
 class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
-
+  has_many :assign_sales_companies, dependent: :destroy
+  has_many :companies, through: :assign_sales_companies
   has_many :memberships, dependent: :destroy
   has_many :organizations, through: :memberships
 

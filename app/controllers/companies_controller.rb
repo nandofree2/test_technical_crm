@@ -1,9 +1,16 @@
 class CompaniesController < ApplicationController
-  before_action :set_company, only: %i[show edit update destroy]
+  before_action :set_company, only: %i[show edit update]
+  authorize_resource
 
   def index
-    @q = current_organization.companies.ransack(params[:q])
-    @companies = @q.result(distinct: true).order(:name).page(params[:page]).per(10)
+    @q = current_organization.companies
+                             .accessible_by(current_ability)
+                             .ransack(params[:q])
+    
+    @companies = @q.result(distinct: true)
+                   .order(:name)
+                   .page(params[:page])
+                   .per(10)
     @current_organization = current_organization
   end
 
@@ -12,12 +19,10 @@ class CompaniesController < ApplicationController
 
   def new
     @company = current_organization.companies.new
-    authorize! :create, @company
   end
 
   def create
     @company = current_organization.companies.new(company_params)
-    authorize! :create, @company
 
     if @company.save
       redirect_to @company, notice: "Company was successfully created."
@@ -37,21 +42,19 @@ class CompaniesController < ApplicationController
     end
   end
 
-  def destroy
-    @company.destroy
-    redirect_to companies_path, notice: "Company was successfully destroyed.", status: :see_other
-  end
-
   private
 
   def set_company
-    org = current_organization
-    @company = org.companies.find(params[:id])
+    @company = current_organization.companies.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to companies_path, alert: "Company not found or not accessible"
   end
 
   def company_params
-    params.require(:company).permit(:name, :industry)
+    permitted = [ :name, :industry ]
+    
+    permitted << { user_ids: [] } if current_user_membership&.admin?
+
+    params.require(:company).permit(permitted)
   end
 end
