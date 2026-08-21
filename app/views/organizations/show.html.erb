@@ -60,7 +60,7 @@
           <h5 class="card-title fw-bold text-dark mb-0 d-flex align-items-center">
             Companies
           </h5>
-          <span class="badge bg-primary rounded-pill px-3"><%= @companies.count %></span>
+          <span class="badge bg-primary rounded-pill px-3"><%= @companies.count if @companies.present? %></span>
         </div>
         <div class="card-body p-0">
           <div class="table-responsive">
@@ -72,7 +72,7 @@
                 </tr>
               </thead>
               <tbody>
-                <% if @companies.any? %>
+                <% if @companies.present? %>
                   <% @companies.each do |company| %>
                     <tr>
                       <td class="ps-4 fw-semibold"><%= company.name %></td>
@@ -83,7 +83,7 @@
                   <% end %>
                 <% else %>
                   <tr>
-                    <td colspan="2" class="text-center py-4 text-muted">No companies associated with this organization.</td>
+                    <td colspan="2" class="text-center py-4 text-muted">You dont have any companies associated with this organization ask admin for access.</td>
                   </tr>
                 <% end %>
               </tbody>

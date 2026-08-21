@@ -1,55 +1,24 @@
 class OrganizationsController < ApplicationController
-  before_action :set_organization, only: %i[ show edit update destroy ]
+  before_action :set_organization, only: %i[ show ]
+  authorize_resource
 
-  # GET /organizations
   def index
-    @organizations = Organization.order(:name)
+    @organizations = Organization.accessible_by(current_ability)
   end
 
-  # GET /organizations/1
   def show
     @memberships = @organization.memberships.includes(:user)
-    @companies = @organization.companies
-  end
 
-  # GET /organizations/new
-  def new
-    @organization = Organization.new
-  end
-
-  # GET /organizations/1/edit
-  def edit
-  end
-
-  # POST /organizations
-  def create
-    @organization = Organization.new(organization_params)
-
-    if @organization.save
-      redirect_to @organization, notice: "Organization was successfully created."
-    else
-      render :new, status: :unprocessable_entity
+    if current_user_membership&.sales?
+      @companies = @organization.companies.joins(:assign_sales_companies).where(assign_sales_companies: { user_id: current_user.id })
+    elsif current_user_membership&.admin?
+      @companies = @organization.companies
     end
   end
 
-  # PATCH/PUT /organizations/1
-  def update
-    if @organization.update(organization_params)
-      redirect_to @organization, notice: "Organization was successfully updated."
-    else
-      render :edit, status: :unprocessable_entity
-    end
-  end
-
-  # DELETE /organizations/1
-  def destroy
-    @organization.destroy
-    redirect_to organizations_path, notice: "Organization was successfully destroyed.", status: :see_other
-  end
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_organization
     @organization = Organization.find(params[:id])
   end

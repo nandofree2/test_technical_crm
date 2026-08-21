@@ -10,6 +10,7 @@ class Membership < ApplicationRecord
   private
 
   def only_active_membership_per_user
+    return unless user_id.present?
     errors.add(:base, "User can only have one active membership at a time") if user.memberships.active.where.not(id: id).exists?
   end
 end

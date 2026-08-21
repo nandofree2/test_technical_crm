@@ -5,9 +5,14 @@ class Ability
     user ||= User.new
 
     active_membership = user.memberships.active.first
+    return unless active_membership
 
-    can :manage, Company, organization_id: active_membership.organization_id if active_membership&.admin?
-    can :read, :update, Company, organization_id: active_membership.organization_id if active_membership&.sales?
-
+    if active_membership.admin?
+      can :read, Organization, id: active_membership.organization_id
+      can :manage, Company, organization_id: active_membership.organization_id
+    elsif active_membership.sales?
+      can :read, Organization, id: active_membership.organization_id
+      can %i[read update], Company, organization_id: active_membership.organization_id, users: { id: user.id }
+    end
   end
 end

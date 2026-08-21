@@ -3,13 +3,29 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   include CanCan::ControllerAdditions
 
-  helper_method :current_organization
+  helper_method :current_organization, :current_user_membership
 
   private
 
   def current_organization
     return nil unless current_user
     current_user.memberships.active.first&.organization
+  end
+
+  def current_user_membership
+    return nil unless current_user
+    current_user.memberships.active.first
+  end
+
+  rescue_from CanCan::AccessDenied do |exception|
+    respond_to do |format|
+      format.html do
+        redirect_to root_path, alert: "You do not have access for this action."
+      end
+      format.json do
+        render json: { error: "You do not have access for this action." }, status: :forbidden
+      end
+    end
   end
 
   protected
