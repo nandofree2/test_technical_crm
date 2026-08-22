@@ -3,13 +3,18 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   include CanCan::ControllerAdditions
 
-  helper_method :current_organization, :current_user_membership
+  helper_method :current_organization, :current_user_membership, :sales_members
 
   private
 
   def current_organization
     return nil unless current_user
     current_user.memberships.active.first&.organization
+  end
+
+  def sales_members
+    return nil unless current_user
+    current_organization.memberships.active.where(role: :sales).includes(:user)
   end
 
   def current_user_membership

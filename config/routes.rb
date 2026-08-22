@@ -15,6 +15,7 @@ Rails.application.routes.draw do
 
   resources :organizations
   resources :companies
+  resources :opportunities
   resources :users do
     member do
       post :switch_organization

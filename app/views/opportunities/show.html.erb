@@ -1,0 +1,31 @@
+<div class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h1 class="fw-bold text-dark mb-1"><%= @opportunity.title %></h1>
+    </div>
+    <div>
+      <% if can?(:update, @opportunity) %>
+        <%= link_to 'Edit', edit_opportunity_path(@opportunity), class: 'btn btn-outline-secondary me-2' %>
+      <% end %>
+      <%= link_to 'Back', opportunities_path, class: 'btn btn-link' %>
+    </div>
+  </div>
+
+  <div class="card p-4">
+    <p><strong>Organization:</strong> <%= @opportunity.organization.name %></p>
+    <p><strong>Company:</strong> <%= @opportunity.company.name %></p>
+    <p><strong>Estimated Value:</strong> <%= number_to_currency(@opportunity.estimated_value) %></p>
+    <p><strong>Stage:</strong> <span class="badge bg-primary"> <%= @opportunity.stage %></span></p>
+    <% if @opportunity.users.any? %>
+      <p>
+        <strong>Assigned Sales Members:</strong><br>
+        <% @opportunity.users.each do |user| %>
+          <span class="badge bg-primary"><%= user.name %></span>
+        <% end %>
+      </p>
+    <% else %>
+      <p><strong>Assigned Sales Members:</strong> <span class="text-muted">None</span></p>
+    <% end %>
+    <p><strong>Created:</strong> <%= l(@opportunity.created_at, format: :long) %></p>
+  </div>
+</div>
