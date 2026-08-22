@@ -1,0 +1,94 @@
+<%= form_with(model: opportunity, local: true) do |form| %>
+  <% if opportunity.errors.any? %>
+    <div class="alert alert-danger">
+      <h4>Errors</h4>
+      <ul>
+        <% opportunity.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :company_id, 'Company', class: 'form-label' %>
+    <%= form.text_field :company_search,
+      value: opportunity.company&.name,
+      list: 'company-search-options',
+      class: 'form-control',
+      placeholder: 'Search company...' %>
+    <datalist id="company-search-options">
+      <% @companies&.each do |company| %>
+        <option value="<%= company.name %>" data-company-id="<%= company.id %>"></option>
+      <% end %>
+    </datalist>
+    <%= form.hidden_field :company_id %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :title, class: 'form-label' %>
+    <%= form.text_field :title, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :estimated_value, class: 'form-label' %>
+    <%= form.number_field :estimated_value, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :stage, 'Stage', class: 'form-label' %>
+    <div class="d-flex flex-wrap gap-3">
+      <% Opportunity.stages.keys.each do |stage| %>
+        <div class="form-check">
+          <%= form.radio_button :stage,
+            stage,
+            checked: opportunity.stage.blank? ? stage == 'lead' : opportunity.stage == stage,
+            class: 'form-check-input' %>
+          <%= form.label "stage_#{stage}", stage.titleize, class: 'form-check-label' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const searchInput = document.getElementById('opportunity_company_search');
+      const companyIdField = document.getElementById('opportunity_company_id');
+      const options = Array.from(document.querySelectorAll('#company-search-options option'));
+
+      if (!searchInput || !companyIdField) return;
+
+      const syncCompanySelection = function() {
+        const match = options.find((option) => option.value === searchInput.value);
+        companyIdField.value = match ? match.dataset.companyId : '';
+      };
+
+      searchInput.addEventListener('input', syncCompanySelection);
+      syncCompanySelection();
+    });
+  </script>
+
+  <% current_membership = current_user.memberships.active.first %>
+  <% if current_membership&.admin? %>
+    <div class="mb-3">
+      <%= form.label :user_ids, "Assign Sales Members (optional)", class: 'form-label' %>
+      <div class="border rounded p-3" style="max-height: 300px; overflow-y: auto;">
+        <% if @sales_members.present? %>
+          <%= hidden_field_tag "opportunity[user_ids][]", "" %>
+          <% @sales_members.each do |membership| %>
+            <div class="form-check">
+              <%= form.check_box :user_ids, { multiple: true, class: 'form-check-input', id: "opportunity_user_ids_#{membership.user.id}" }, membership.user.id, nil %>
+              <%= form.label "user_ids_#{membership.user.id}", membership.user.name, class: 'form-check-label' %>
+            </div>
+          <% end %>
+        <% else %>
+          <p class="text-muted">No sales members available in this organization.</p>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="d-flex justify-content-end">
+    <%= form.submit class: 'btn btn-primary' %>
+  </div>
+<% end %>

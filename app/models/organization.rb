@@ -2,6 +2,7 @@ class Organization < ApplicationRecord
   has_many :memberships, dependent: :destroy
   has_many :users, through: :memberships
   has_many :companies, dependent: :destroy
+  has_many :opportunities, dependent: :destroy
 
   validates :name, presence: true, length: { minimum: 3 }
   validates :slug, presence: true, uniqueness: true

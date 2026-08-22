@@ -1,5 +1,6 @@
 class CompaniesController < ApplicationController
   before_action :set_company, only: %i[show edit update]
+  before_action :set_sales_members, only: %i[new edit]
   authorize_resource
 
   def index
@@ -48,6 +49,10 @@ class CompaniesController < ApplicationController
     @company = current_organization.companies.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to companies_path, alert: "Company not found or not accessible"
+  end
+
+  def set_sales_members
+    @sales_members = sales_members
   end
 
   def company_params
