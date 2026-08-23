@@ -1,7 +1,7 @@
 class OpportunitiesController < ApplicationController
   before_action :set_opportunity, only: %i[show edit update]
-  before_action :set_search_company, only: %i[new edit]
-  before_action :set_sales_members, only: %i[new edit]
+  before_action :set_search_company, only: %i[new edit create update]
+  before_action :set_sales_members, only: %i[new edit create update]
   authorize_resource
 
   def index
@@ -60,9 +60,8 @@ class OpportunitiesController < ApplicationController
 
   def set_search_company
     @companies = current_organization.companies
-                                   .accessible_by(current_ability)
-                                   .order(:name)
-                                   .limit(5)
+                                     .accessible_by(current_ability)
+                                     .order(:name)
   end
 
   def set_sales_members
@@ -70,7 +69,7 @@ class OpportunitiesController < ApplicationController
   end
 
   def opportunity_params
-    permitted = [ :title, :estimated_value, :stage, :company_id, :organization_id, user_ids: [] ]
+    permitted = [:title, :estimated_value, :stage, :company_id, user_ids: []]
 
     permitted << { user_ids: [] } if current_user_membership&.admin?
 

@@ -12,17 +12,7 @@
 
   <div class="mb-3">
     <%= form.label :company_id, 'Company', class: 'form-label' %>
-    <%= form.text_field :company_search,
-      value: opportunity.company&.name,
-      list: 'company-search-options',
-      class: 'form-control',
-      placeholder: 'Search company...' %>
-    <datalist id="company-search-options">
-      <% @companies&.each do |company| %>
-        <option value="<%= company.name %>" data-company-id="<%= company.id %>"></option>
-      <% end %>
-    </datalist>
-    <%= form.hidden_field :company_id %>
+    <%= form.collection_select :company_id, @companies, :id, :name, { prompt: 'Select company' }, { class: 'form-select' } %>
   </div>
 
   <div class="mb-3">
@@ -49,24 +39,6 @@
       <% end %>
     </div>
   </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const searchInput = document.getElementById('opportunity_company_search');
-      const companyIdField = document.getElementById('opportunity_company_id');
-      const options = Array.from(document.querySelectorAll('#company-search-options option'));
-
-      if (!searchInput || !companyIdField) return;
-
-      const syncCompanySelection = function() {
-        const match = options.find((option) => option.value === searchInput.value);
-        companyIdField.value = match ? match.dataset.companyId : '';
-      };
-
-      searchInput.addEventListener('input', syncCompanySelection);
-      syncCompanySelection();
-    });
-  </script>
 
   <% current_membership = current_user.memberships.active.first %>
   <% if current_membership&.admin? %>
