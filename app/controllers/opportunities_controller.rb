@@ -17,7 +17,10 @@ class OpportunitiesController < ApplicationController
       :stage,
       Arel.sql('COUNT(DISTINCT opportunities.id)'),
       Arel.sql('COALESCE(SUM(opportunities.estimated_value), 0)')
-    ).to_h { |stage, count, total| [stage, { count: count, total: total }] }
+    ).to_h do |stage, count, total|
+      stage_name = Opportunity.stages.key(stage) || stage.to_s
+      [stage_name, { count: count, total: total }]
+    end
                        
     @current_organization = current_organization
   end
