@@ -1,18 +1,10 @@
-ENV["RAILS_ENV"] ||= "test"
-require_relative "../config/environment"
-require "rails/test_help"
-require "devise/test/integration_helpers"
-
-class ActiveSupport::TestCase
-  parallelize(workers: 1)
-  self.use_transactional_tests = true
-
+module SpecFactories
   def create_user(name:, email:)
     User.create!(
       name: name,
       email: email,
-      password: "password123",
-      password_confirmation: "password123"
+      password: "12341234",
+      password_confirmation: "12341234"
     )
   end
 
@@ -44,10 +36,6 @@ class ActiveSupport::TestCase
   end
 end
 
-class ActionDispatch::IntegrationTest
-  include Devise::Test::IntegrationHelpers
-
-  def sign_in_as(user)
-    sign_in user
-  end
+RSpec.configure do |config|
+  config.include SpecFactories
 end
