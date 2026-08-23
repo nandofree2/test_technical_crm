@@ -1,6 +1,6 @@
 users_data = [
   { name: 'Admin A', email: 'admin_a@test.com' },
-  { name: 'Admin B', email: 'admin_b@test.com' },
+  { name: 'Admin and Sales B', email: 'admin_and_sales_b@test.com' },
   { name: 'Admin C', email: 'admin_c@test.com' },
   { name: 'Admin D', email: 'admin_d@test.com' },
   { name: 'Sales A', email: 'sales_a@test.com' },
@@ -29,13 +29,14 @@ organization[2] = Organization.find_or_create_by!(name: "PT Cipta Mandiri", slug
 
 organization_user[0] = [
   {  email: 'admin_a@test.com', role: 'admin', member_status: 'active' },
-  {  email: 'admin_b@test.com', role: 'admin', member_status: 'active' },
+  {  email: 'admin_and_sales_b@test.com', role: 'admin', member_status: 'active' },
   {  email: 'sales_a@test.com', role: 'sales', member_status: 'active' },
   {  email: 'sales_b@test.com', role: 'sales', member_status: 'active' },
 ]
 
 organization_user[1] = [
   {  email: 'admin_a@test.com', role: 'admin', member_status: 'inactive' },
+  {  email: 'admin_and_sales_b@test.com', role: 'sales', member_status: 'inactive' },
   {  email: 'sales_c@test.com', role: 'sales', member_status: 'inactive' },
   {  email: 'sales_d@test.com', role: 'sales', member_status: 'active' },
 ]

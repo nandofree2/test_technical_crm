@@ -23,10 +23,12 @@ class UsersController < ApplicationController
   end
 
   def switch_organization
-    if MembershipOperation::SwitchService.new(current_user, params[:membership_id]).switch
+    switch_service = MembershipOperation::SwitchService.new(current_user, params[:membership_id])
+
+    if switch_service.switch
       redirect_to user_path(current_user), notice: "Successfully switched organization"
     else
-      render json: { error: service.error_message }, status: :forbidden
+      render json: { error: switch_service.error_message }, status: :forbidden
     end
   end
 

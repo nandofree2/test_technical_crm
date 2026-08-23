@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_08_19_101013) do
+ActiveRecord::Schema[7.2].define(version: 2026_08_23_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -20,6 +20,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_19_101013) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["company_id"], name: "index_assign_sales_companies_on_company_id"
+    t.index ["user_id", "company_id"], name: "index_assign_sales_companies_on_user_and_company_unique", unique: true
     t.index ["user_id", "company_id"], name: "index_assign_sales_companies_on_user_id_and_company_id"
     t.index ["user_id"], name: "index_assign_sales_companies_on_user_id"
   end
@@ -30,6 +31,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_08_19_101013) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["opportunity_id"], name: "index_assign_sales_opportunities_on_opportunity_id"
+    t.index ["user_id", "opportunity_id"], name: "index_assign_sales_opportunities_on_user_and_opportunity_unique", unique: true
     t.index ["user_id", "opportunity_id"], name: "index_assign_sales_opportunities_on_user_id_and_opportunity_id"
     t.index ["user_id"], name: "index_assign_sales_opportunities_on_user_id"
   end
