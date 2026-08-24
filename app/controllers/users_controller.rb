@@ -1,6 +1,8 @@
 class UsersController < ApplicationController
+  before_action :authorize_admin!, only: %i[index new create]
+
   def index
-    @users = User.all
+    @users = current_organization.users
     render json: @users
   end
 
@@ -10,11 +12,19 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    if @user.save
+
+    User.transaction do
+      @user.save!
+      @user.memberships.create!(organization: current_organization, role: :sales, member_status: :active)
+    end
+
+    if @user.persisted?
       redirect_to @user
     else
       render :new
     end
+  rescue ActiveRecord::RecordInvalid
+    render :new, status: :unprocessable_entity
   end
 
   def show
@@ -33,19 +43,26 @@ class UsersController < ApplicationController
   end
 
   def edit
-    @user = User.find(params[:id])
+    @user = current_user
   end
 
   def update
-    @user = User.find(params[:id])
+    @user = current_user
     if @user.update(user_params)
-      redirect_to @user
+      redirect_to user_path(current_user)
     else
       render :edit
     end
   end
 
   private
+
+  def authorize_admin!
+    return if current_user_membership&.admin?
+
+    raise CanCan::AccessDenied
+  end
+
   def user_params
     params.require(:user).permit(:name, :email, :password, :password_confirmation)
   end

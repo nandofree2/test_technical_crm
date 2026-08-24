@@ -72,7 +72,7 @@ class OpportunitiesController < ApplicationController
   end
 
   def opportunity_params
-    permitted = [:title, :estimated_value, :stage, :company_id, user_ids: []]
+    permitted = [:title, :estimated_value, :stage, :company_id]
 
     permitted << { user_ids: [] } if current_user_membership&.admin?
 

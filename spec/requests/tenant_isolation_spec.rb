@@ -88,13 +88,15 @@ RSpec.describe "Tenant isolation", type: :request do
     add_membership(user: other_sales, organization: organization, role: :sales)
     company = create_company(organization: organization)
     opportunity = create_opportunity(organization: organization, company: company)
+    opportunity.users << sales
     sign_in sales
 
     patch opportunity_path(opportunity), params: {
       opportunity: { title: "Forged Assignment", user_ids: [other_sales.id] }
     }
 
-    expect(response).to redirect_to(root_path)
-    expect(opportunity.reload.users).to be_empty
+    expect(response).to redirect_to(opportunity_path(opportunity))
+    expect(opportunity.reload.title).to eq("Forged Assignment")
+    expect(opportunity.users).to contain_exactly(sales)
   end
 end

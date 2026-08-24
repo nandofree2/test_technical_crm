@@ -31,6 +31,6 @@ class TestLoggerFormatter
   end
 
   def dump_summary(summary)
-    @output.puts "[TEST] SUMMARY: #{summary.example_count} examples, #{summary.failure_count} failures"
+    @output.puts "[TEST] SUMMARY: #{summary.example_count} examples, #{summary.example_count - summary.failure_count} passed, #{summary.failure_count} failures"
   end
 end
