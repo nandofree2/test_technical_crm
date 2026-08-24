@@ -13,7 +13,8 @@ class ApplicationController < ActionController::Base
   end
 
   def sales_members
-    return nil unless current_user
+    return Membership.none unless current_organization
+
     current_organization.memberships.active.where(role: :sales).includes(:user)
   end
 
